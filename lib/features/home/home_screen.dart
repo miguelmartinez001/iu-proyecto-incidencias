@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -19,7 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String _searchQuery = "";
   String _selectedFilter = "Todos";
   final _searchController = TextEditingController();
-
   final List<String> _filters = ["Todos", "Baches", "Alumbrado", "Fugas"];
 
   List<ReportModel> get _filteredReports {
@@ -41,55 +41,156 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: MediaQuery.of(context).size.height * 0.45,
-            child: FlutterMap(
-              options: const MapOptions(
-                initialCenter: LatLng(19.3562, -99.2995),
-                initialZoom: 14.0,
-                interactionOptions: InteractionOptions(
-                  flags: InteractiveFlag.none,
-                ),
-              ),
-              children: [
-                TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.tuusuario.cuajireport',
-                ),
-              ],
-            ),
-          ),
-
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.35,
-            left: 0,
-            right: 0,
-            height: MediaQuery.of(context).size.height * 0.1,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Theme.of(
-                      context,
-                    ).scaffoldBackgroundColor.withValues(alpha: 0.0),
-                    Theme.of(context).scaffoldBackgroundColor,
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          Positioned.fill(
-            top: statusBarHeight + 70,
+          // 1. TODO EL CONTENIDO ESCROLEABLE
+          SingleChildScrollView(
             child: Column(
               children: [
-                const Spacer(),
+                // El mapa ahora tiene una altura fija y escrolea con la página
+                // 1. EL MAPA
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.45,
+                  child: Stack(
+                    children: [
+                      FlutterMap(
+                        options: const MapOptions(
+                          initialCenter: LatLng(19.3562, -99.2995),
+                          initialZoom:
+                              14.5, // Un poco más cerca para que luzca mejor
+                          interactionOptions: InteractionOptions(
+                            flags: InteractiveFlag
+                                .all, // <-- ¡AHORA SÍ ES INTERACTIVO! (Zoom, arrastrar, etc.)
+                          ),
+                        ),
+                        children: [
+                          TileLayer(
+                            urlTemplate:
+                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            userAgentPackageName: 'com.tuusuario.cuajireport',
+                          ),
 
+                          // CAPA DE MARCADORES (Aquí dibujamos tu posición)
+                          // CAPA DE MARCADORES (Dinámica)
+                          // CAPA DE MARCADORES (Dinámica y protegida contra nulos)
+                          MarkerLayer(
+                            markers: [
+                              // 1. FILTRAMOS Y MAPEAMOS LOS REPORTES DEL MOCK
+                              ..._filteredReports
+                                  .where(
+                                    (report) => report.location != null,
+                                  ) // <-- PROTECCIÓN ANTI-CRASH
+                                  .map((report) {
+                                    // Parseamos la categoría para los colores
+                                    ReportCategory parsedCategory;
+                                    final catStr = report.category
+                                        .toLowerCase();
+                                    if (catStr.contains('bache')) {
+                                      parsedCategory = ReportCategory.bache;
+                                    } else if (catStr.contains('alumbrado') ||
+                                        catStr.contains('luz')) {
+                                      parsedCategory = ReportCategory.alumbrado;
+                                    } else if (catStr.contains('fuga') ||
+                                        catStr.contains('agua')) {
+                                      parsedCategory = ReportCategory.fuga;
+                                    } else {
+                                      parsedCategory = ReportCategory.otro;
+                                    }
+
+                                    // Seleccionamos el icono correcto según la categoría
+                                    IconData markerIcon =
+                                        LucideIcons.alertCircle;
+                                    if (parsedCategory == ReportCategory.bache)
+                                      markerIcon = LucideIcons.alertTriangle;
+                                    if (parsedCategory ==
+                                        ReportCategory.alumbrado)
+                                      markerIcon = LucideIcons.lightbulb;
+                                    if (parsedCategory == ReportCategory.fuga)
+                                      markerIcon = LucideIcons.droplet;
+
+                                    return Marker(
+                                      point: report
+                                          .location, // Aquí ya es seguro que no es nulo
+                                      width: 36,
+                                      height: 36,
+                                      child: _buildMapMarker(
+                                        context,
+                                        markerIcon,
+                                        parsedCategory,
+                                      ),
+                                    );
+                                  }),
+
+                              // 2. INDICADOR DEL USUARIO (El punto azul fijo al final)
+                              Marker(
+                                point: const LatLng(19.3562, -99.2995),
+                                width: 40,
+                                height: 40,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Container(
+                                      width: 28,
+                                      height: 28,
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue.withValues(
+                                          alpha: 0.25,
+                                        ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    Container(
+                                      width: 14,
+                                      height: 14,
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.white,
+                                          width: 2,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(
+                                              alpha: 0.15,
+                                            ),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      // Degradado para que el mapa se funda con el fondo
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: 80,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Theme.of(context).scaffoldBackgroundColor
+                                    .withValues(alpha: 0.0),
+                                Theme.of(context).scaffoldBackgroundColor,
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Buscador
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Container(
@@ -129,6 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 15),
 
+                // Filtros
                 SizedBox(
                   height: 35,
                   child: ListView.builder(
@@ -178,41 +280,39 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 15),
 
-                Expanded(
-                  flex: 3,
-                  child: Container(
-                    color: Colors.transparent,
-                    child: _filteredReports.isEmpty
-                        ? Center(
-                            child: Text(
-                              "No se encontraron reportes",
-                              style: TextStyle(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          )
-                        : ListView.builder(
-                            padding: const EdgeInsets.only(
-                              left: 20,
-                              right: 20,
-                              top: 10,
-                              bottom: 80,
-                            ),
-                            itemCount: _filteredReports.length,
-                            itemBuilder: (context, index) {
-                              return _buildReportCard(
-                                context,
-                                _filteredReports[index],
-                                colorScheme,
-                              );
-                            },
-                          ),
-                  ),
-                ),
+                // Lista de Tarjetas (shrinkWrap es vital aquí para que no marque error de layout)
+                _filteredReports.isEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.all(40.0),
+                        child: Text(
+                          "No se encontraron reportes",
+                          style: TextStyle(color: colorScheme.onSurfaceVariant),
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.only(
+                          left: 20,
+                          right: 20,
+                          top: 10,
+                          bottom: 100,
+                        ),
+                        physics:
+                            const NeverScrollableScrollPhysics(), // Desactiva scroll interno
+                        shrinkWrap: true, // Se adapta a la altura de sus hijos
+                        itemCount: _filteredReports.length,
+                        itemBuilder: (context, index) {
+                          return _buildReportCard(
+                            context,
+                            _filteredReports[index],
+                            colorScheme,
+                          );
+                        },
+                      ),
               ],
             ),
           ),
 
+          // 2. HEADER DE CRISTAL (Fijo arriba)
           Positioned(
             top: 0,
             left: 0,
@@ -222,12 +322,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
                 child: Container(
                   width: double.infinity,
-                  height: statusBarHeight + 70,
+                  height: statusBarHeight + 60,
                   padding: EdgeInsets.only(
                     top: statusBarHeight,
                     left: 20,
                     right: 20,
-                    bottom: 15,
+                    bottom: 10,
                   ),
                   alignment: Alignment.bottomLeft,
                   decoration: BoxDecoration(
@@ -242,7 +342,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   child: Text(
-                    "Reportes Urbanos Cuajimalpa",
+                    "Reportes Urbanos",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -289,66 +389,129 @@ class _HomeScreenState extends State<HomeScreen> {
       iconData = LucideIcons.fileText;
     }
 
+    return GestureDetector(
+      onTap: () {
+        context.push('/report-detail', extra: report);
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 15),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border(left: BorderSide(color: categoryColor, width: 5)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 10,
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: categoryColor.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(iconData, color: categoryColor, size: 24),
+            ),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Fila con el título y el Badge de "Tú"
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          report.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                      if (report.isMine == true) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: colorScheme.primary.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Text(
+                            "Mío",
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        LucideIcons.mapPin,
+                        size: 12,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        "${report.timeAgo} • ${report.distance}",
+                        style: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMapMarker(
+    BuildContext context,
+    IconData icon,
+    ReportCategory category,
+  ) {
+    final color = CategoryColors.getColorForCategory(context, category);
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border(left: BorderSide(color: categoryColor, width: 5)),
+        color: color,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 2.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: categoryColor.withValues(alpha: 0.15),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(iconData, color: categoryColor, size: 24),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  report.title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(
-                      LucideIcons.mapPin,
-                      size: 12,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      "${report.timeAgo} • ${report.distance}",
-                      style: TextStyle(
-                        color: colorScheme.onSurfaceVariant,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      child: Icon(icon, color: Colors.white, size: 18),
     );
   }
 }

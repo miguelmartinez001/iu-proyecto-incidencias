@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 
-enum ButtonVariant { primary, secondary, danger, dangersecondary, outline }
+enum ButtonVariant {
+  primary,
+  secondary,
+  danger,
+  dangersecondary,
+  outline,
+  neutral,
+}
 
 enum IconPosition { left, right }
 
@@ -9,6 +16,7 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
   final ButtonVariant variant;
   final IconData? icon;
+  final bool? isDisabled;
   final IconPosition iconPosition;
   final bool isFullWidth;
 
@@ -18,6 +26,7 @@ class CustomButton extends StatelessWidget {
     required this.onPressed,
     this.variant = ButtonVariant.primary,
     this.icon,
+    this.isDisabled = false,
     this.iconPosition = IconPosition.left,
     this.isFullWidth = true,
   });
@@ -30,29 +39,42 @@ class CustomButton extends StatelessWidget {
     Color foregroundColor;
     BorderSide? borderSide;
 
-    switch (variant) {
-      case ButtonVariant.primary:
-        backgroundColor = colorScheme.primary;
-        foregroundColor = colorScheme.onPrimary;
-        break;
-      case ButtonVariant.secondary:
-        backgroundColor = colorScheme.secondary;
-        foregroundColor = colorScheme.onSecondary;
-        break;
-      case ButtonVariant.danger:
-        backgroundColor = colorScheme.error;
-        foregroundColor = colorScheme.onError;
-        break;
-      case ButtonVariant.dangersecondary:
-        backgroundColor = colorScheme.error;
-        foregroundColor = colorScheme.onError;
-        break;
-
-      case ButtonVariant.outline:
-        backgroundColor = Colors.transparent;
-        foregroundColor = colorScheme.primary;
-        borderSide = BorderSide(color: colorScheme.primary, width: 2);
-        break;
+    if (isDisabled == true) {
+      backgroundColor = colorScheme.onSurface.withValues(alpha: 0.12);
+      foregroundColor = colorScheme.onSurface.withValues(alpha: 0.38);
+      borderSide = null;
+    } else {
+      switch (variant) {
+        case ButtonVariant.primary:
+          backgroundColor = colorScheme.primary;
+          foregroundColor = colorScheme.onPrimary;
+          break;
+        case ButtonVariant.secondary:
+          backgroundColor = colorScheme.secondary;
+          foregroundColor = colorScheme.onSecondary;
+          break;
+        case ButtonVariant.danger:
+          backgroundColor = colorScheme.error;
+          foregroundColor = colorScheme.onError;
+          break;
+        case ButtonVariant.dangersecondary:
+          backgroundColor = colorScheme.error;
+          foregroundColor = colorScheme.onError;
+          break;
+        case ButtonVariant.outline:
+          backgroundColor = Colors.transparent;
+          foregroundColor = colorScheme.primary;
+          borderSide = BorderSide(color: colorScheme.primary, width: 2);
+          break;
+        case ButtonVariant.neutral:
+          backgroundColor = colorScheme.surface;
+          foregroundColor = colorScheme.onSurface;
+          borderSide = BorderSide(
+            color: colorScheme.onSurface.withValues(alpha: 0.12),
+            width: 1,
+          );
+          break;
+      }
     }
 
     final buttonContent = Row(
@@ -63,7 +85,6 @@ class CustomButton extends StatelessWidget {
           Icon(icon, size: 20, color: foregroundColor),
           const SizedBox(width: 8),
         ],
-
         Text(
           text,
           style: TextStyle(
@@ -72,7 +93,6 @@ class CustomButton extends StatelessWidget {
             color: foregroundColor,
           ),
         ),
-
         if (icon != null && iconPosition == IconPosition.right) ...[
           const SizedBox(width: 8),
           Icon(icon, size: 20, color: foregroundColor),
@@ -87,11 +107,13 @@ class CustomButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
           foregroundColor: foregroundColor,
+          elevation: (isDisabled == true || variant == ButtonVariant.outline)
+              ? 0
+              : 2,
           shape: const StadiumBorder(),
-          elevation: 0,
           side: borderSide,
         ),
-        onPressed: onPressed,
+        onPressed: isDisabled == true ? null : onPressed,
         child: buttonContent,
       ),
     );

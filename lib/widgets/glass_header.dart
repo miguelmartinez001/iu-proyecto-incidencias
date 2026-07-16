@@ -6,12 +6,18 @@ class GlassHeader extends StatelessWidget {
   final String title;
   final bool showBackButton;
   final VoidCallback? onBackPressed;
+  final bool? showRightActionButton;
+  final Widget? rightActionButton;
+  final VoidCallback? onRightActionPressed;
 
   const GlassHeader({
     super.key,
     required this.title,
     this.showBackButton = false,
     this.onBackPressed,
+    this.showRightActionButton = false,
+    this.rightActionButton,
+    this.onRightActionPressed,
   });
 
   @override
@@ -26,7 +32,7 @@ class GlassHeader extends StatelessWidget {
           width: double.infinity,
           height: statusBarHeight + 60,
           decoration: BoxDecoration(
-            color: colorScheme.surface.withValues(alpha: 0.15),
+            color: colorScheme.surface.withValues(alpha: 0.90),
             border: Border(
               bottom: BorderSide(
                 color: colorScheme.onSurface.withValues(alpha: 0.2),
@@ -44,7 +50,7 @@ class GlassHeader extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: colorScheme.surface.withValues(alpha: 0.5),
+                      color: colorScheme.surface.withValues(alpha: 0.90),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -64,6 +70,10 @@ class GlassHeader extends StatelessWidget {
                   color: colorScheme.onSurface,
                 ),
               ),
+              if (showRightActionButton == true) ...[
+                const SizedBox(width: 12),
+                rightActionButton ?? Container(),
+              ],
             ],
           ),
         ),

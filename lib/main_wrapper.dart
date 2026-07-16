@@ -41,9 +41,7 @@ class MainWrapper extends StatelessWidget {
       body: child,
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          print("Navegar a crear reporte");
-        },
+        onPressed: () => context.go('/new-report'),
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
         shape: const CircleBorder(),
@@ -52,50 +50,61 @@ class MainWrapper extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
-      bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8.0,
-        color: colorScheme.surface,
-        elevation: 10,
-        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-        height: 65,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildNavItem(
-              context,
-              icon: LucideIcons.home,
-              label: 'Inicio',
-              index: 0,
-              currentIndex: currentIndex,
-              colorScheme: colorScheme,
-            ),
-            _buildNavItem(
-              context,
-              icon: LucideIcons.fileText,
-              label: 'Reportes',
-              index: 1,
-              currentIndex: currentIndex,
-              colorScheme: colorScheme,
-            ),
-            const SizedBox(width: 48),
-            _buildNavItem(
-              context,
-              icon: LucideIcons.bell,
-              label: 'Alertas',
-              index: 2,
-              currentIndex: currentIndex,
-              colorScheme: colorScheme,
-            ),
-            _buildNavItem(
-              context,
-              icon: LucideIcons.user,
-              label: 'Cuenta',
-              index: 3,
-              currentIndex: currentIndex,
-              colorScheme: colorScheme,
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 15,
+              offset: const Offset(0, -5),
             ),
           ],
+        ),
+        child: BottomAppBar(
+          shape: const CircularNotchedRectangle(),
+          notchMargin: 8.0,
+          color: colorScheme.surface,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          height: 65,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildNavItem(
+                context,
+                icon: LucideIcons.home,
+                label: 'Inicio',
+                index: 0,
+                currentIndex: currentIndex,
+                colorScheme: colorScheme,
+              ),
+              _buildNavItem(
+                context,
+                icon: LucideIcons.fileText,
+                label: 'Reportes',
+                index: 1,
+                currentIndex: currentIndex,
+                colorScheme: colorScheme,
+              ),
+              const SizedBox(width: 48),
+              _buildNavItem(
+                context,
+                icon: LucideIcons.bell,
+                label: 'Alertas',
+                index: 2,
+                currentIndex: currentIndex,
+                colorScheme: colorScheme,
+              ),
+              _buildNavItem(
+                context,
+                icon: LucideIcons.user,
+                label: 'Cuenta',
+                index: 3,
+                currentIndex: currentIndex,
+                colorScheme: colorScheme,
+              ),
+            ],
+          ),
         ),
       ),
     );
