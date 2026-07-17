@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../core/providers/theme_provider.dart';
 import '../../core/theme/app_theme.dart';
@@ -23,7 +23,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final currentTheme = context.watch<ThemeProvider>().currentTheme;
-    final String temaActualStr = currentTheme == AppTheme.dark ? "Oscuro" : "Claro";
+    final String temaActualStr = currentTheme == AppTheme.dark
+        ? "Oscuro"
+        : "Claro";
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
