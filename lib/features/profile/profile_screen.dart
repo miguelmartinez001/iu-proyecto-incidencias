@@ -37,7 +37,6 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // AVATAR Y BADGE
             Stack(
               alignment: Alignment.bottomRight,
               children: [
@@ -101,7 +100,6 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 30),
 
-            // TARJETAS DE ESTADÍSTICAS
             Row(
               children: [
                 Expanded(
@@ -127,7 +125,6 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 35),
 
-            // SECCIÓN GENERAL
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -157,7 +154,6 @@ class ProfileScreen extends StatelessWidget {
               () => context.push('/help'),
             ),
 
-            // BOTÓN DE CERRAR SESIÓN ESTILO FIGMA
             InkWell(
               onTap: () => _showLogoutModal(context),
               borderRadius: BorderRadius.circular(20),

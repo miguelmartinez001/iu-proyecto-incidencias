@@ -1,3 +1,4 @@
+import 'package:cuaji_report/core/models/mock_data.dart';
 import 'package:cuaji_report/features/alerts/alerts_screen.dart';
 import 'package:cuaji_report/features/profile/edit_profile_screen.dart';
 import 'package:cuaji_report/features/profile/help_screen.dart';
@@ -15,9 +16,8 @@ import '../../features/home/home_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/reports/reports_screen.dart';
 import '../../features/reports/create_report_screen.dart';
-import '../../features/reports/detail_report_screen.dart'; // <-- ASEGÚRATE DE IMPORTAR ESTO
+import '../../features/reports/detail_report_screen.dart';
 import '../../main_wrapper.dart';
-import '../models/report_mock.dart'; // <-- IMPORTA TU MODELO DE MOCKS
 
 class AppRouter {
   static final router = GoRouter(
@@ -61,17 +61,16 @@ class AppRouter {
       ),
 
       GoRoute(
-        name: 'success-report', // <-- AGREGAMOS NOMBRE EN LA RAÍZ
+        name: 'success-report',
         path: '/success-report',
         builder: (context, state) => const SuccessReportScreen(),
       ),
 
       GoRoute(
-        name: 'report-detail', // <-- AGREGAMOS RUTA DE DETALLE
+        name: 'report-detail',
         path: '/report-detail',
         builder: (context, state) {
-          final report =
-              state.extra as ReportModel; // Recupera el mock rich enviado
+          final report = state.extra as ReportModel;
           return DetailReportScreen(report: report);
         },
       ),

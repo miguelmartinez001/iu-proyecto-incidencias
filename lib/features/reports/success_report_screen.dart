@@ -20,7 +20,6 @@ class SuccessReportScreen extends StatelessWidget {
             children: [
               const Spacer(),
 
-              // Círculo Verde con el Check
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
@@ -35,7 +34,6 @@ class SuccessReportScreen extends StatelessWidget {
               ),
               const SizedBox(height: 30),
 
-              // Textos Principales
               Text(
                 "¡Reporte exitoso!",
                 style: TextStyle(
@@ -56,7 +54,6 @@ class SuccessReportScreen extends StatelessWidget {
               ),
               const SizedBox(height: 35),
 
-              // Tarjeta Resumen Minimizada
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -112,25 +109,22 @@ class SuccessReportScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Botón Opcional: Contactar a la Autoridad
               CustomButton(
                 text: "Contactar a la Autoridad (Opcional)",
                 variant: ButtonVariant.outline,
                 icon: LucideIcons.phoneCall,
                 iconPosition: IconPosition.left,
                 onPressed: () {
-                  // Aquí se ligará el marcado telefónico al conmutador del sector delegacional
-                  print("Llamando a atención ciudadana UAM/Cuajimalpa");
+                  print("Llamando a atención ciudadana Cuajimalpa");
                 },
               ),
 
               const Spacer(),
 
-              // Botón de salida al Home
               CustomButton(
                 text: "Regresar al inicio",
                 onPressed: () {
-                  context.go('/'); // Te regresa al Home Screen limpio
+                  context.go('/');
                 },
               ),
               const SizedBox(height: 20),

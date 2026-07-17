@@ -1,9 +1,9 @@
+import 'package:cuaji_report/core/models/mock_data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_modals.dart';
-import '../../core/models/report_mock.dart';
 
 class DetailReportScreen extends StatefulWidget {
   final ReportModel report;
@@ -58,7 +58,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
       primaryButtonVariant: ButtonVariant.danger,
       secondaryButtonText: "Cancelar",
       onConfirm: () {
-        context.go('/'); // Te devuelve al inicio tras borrar
+        context.go('/');
       },
     );
   }
@@ -167,7 +167,6 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // IMAGEN
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Image.network(
@@ -188,7 +187,6 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
             ),
             const SizedBox(height: 20),
 
-            // TÍTULO Y ESTATUS
             Text(
               widget.report.title,
               style: TextStyle(
@@ -220,7 +218,6 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
             ),
             const SizedBox(height: 20),
 
-            // ESTADÍSTICAS
             Row(
               children: [
                 Expanded(
@@ -246,7 +243,6 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
             ),
             const SizedBox(height: 20),
 
-            // FECHAS
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -273,7 +269,6 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
             ),
             const SizedBox(height: 25),
 
-            // DESCRIPCIÓN
             Text(
               widget.report.description,
               style: TextStyle(
@@ -284,12 +279,9 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
             ),
             const SizedBox(height: 25),
 
-            // BOTÓN HISTORIAL
             InkWell(
-              onTap: () => CustomModals.showHistoryModal(
-                context,
-                widget.report.history,
-              ), // <-- ABRE EL MODAL
+              onTap: () =>
+                  CustomModals.showHistoryModal(context, widget.report.history),
               borderRadius: BorderRadius.circular(16),
               child: Container(
                 padding: const EdgeInsets.all(16),
@@ -350,8 +342,6 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
           ],
         ),
       ),
-
-      // BOTÓN INFERIOR
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -364,9 +354,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                     context,
                     onResolve: _confirmResolve,
                     onDelete: _confirmDelete,
-                    onUpdate: () => print(
-                      "Navegar a editar reporte",
-                    ), // Aquí meterás tu goNamed de edición luego
+                    onUpdate: () => print("Navegar a editar reporte"),
                     onEscalate: () => CustomModals.showEscalateModal(context),
                   ),
                 )
@@ -424,7 +412,6 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
     );
   }
 
-  // (Mismos widgets auxiliares visuales de la versión anterior)
   Widget _buildStatusPill({
     required String label,
     required Color color,

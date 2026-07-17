@@ -39,6 +39,7 @@ dependencies:
     flutter_map: ^8.3.1
     latlong2: ^0.10.1
     lucide_flutter: ^1.23.0
+    image_picker: ^1.2.3
 
 dev_dependencies:
     flutter_test:

@@ -59,7 +59,7 @@ class SuccessRecoverScreen extends StatelessWidget {
                 ),
                 CustomButton(
                   text: "Regresar",
-                  variant: ButtonVariant.secondary, // o ButtonVariant.outline
+                  variant: ButtonVariant.secondary,
                   onPressed: () => context.go('/login'),
                 ),
               ],

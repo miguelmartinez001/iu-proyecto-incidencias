@@ -1,10 +1,30 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../widgets/custom_button.dart';
 
-class EditProfileScreen extends StatelessWidget {
+class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
+
+  @override
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
+  XFile? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _selectedImage = image;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,43 +52,59 @@ class EditProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            // AVATAR CON CÁMARA
-            Center(
-              child: Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
+            GestureDetector(
+              onTap: _pickImage,
+              child: Center(
+                child: Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary.withOpacity(0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: ClipOval(
+                        child: _selectedImage != null
+                            ? (kIsWeb
+                                  ? Image.network(
+                                      _selectedImage!.path,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.file(
+                                      File(_selectedImage!.path),
+                                      fit: BoxFit.cover,
+                                    ))
+                            : Icon(
+                                LucideIcons.user,
+                                size: 45,
+                                color: colorScheme.primary,
+                              ),
+                      ),
                     ),
-                    child: Icon(
-                      LucideIcons.user,
-                      size: 45,
-                      color: colorScheme.primary,
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: colorScheme.surface,
+                          width: 3,
+                        ),
+                      ),
+                      child: const Icon(
+                        LucideIcons.camera,
+                        color: Colors.white,
+                        size: 16,
+                      ),
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: colorScheme.surface, width: 3),
-                    ),
-                    child: const Icon(
-                      LucideIcons.camera,
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 40),
 
-            // FORMULARIO ESTILO FIGMA
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
@@ -76,7 +112,7 @@ class EditProfileScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.03),
+                    color: Colors.black.withOpacity(0.03),
                     blurRadius: 10,
                   ),
                 ],
@@ -136,13 +172,13 @@ class EditProfileScreen extends StatelessWidget {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
-                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+                color: colorScheme.onSurfaceVariant.withOpacity(0.2),
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
-                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+                color: colorScheme.onSurfaceVariant.withOpacity(0.2),
               ),
             ),
             contentPadding: const EdgeInsets.symmetric(
@@ -156,7 +192,6 @@ class EditProfileScreen extends StatelessWidget {
   }
 }
 
-// --- PANTALLA DE ÉXITO (Sin botón de regresar arriba) ---
 class EditProfileSuccessScreen extends StatelessWidget {
   const EditProfileSuccessScreen({super.key});
 
@@ -166,7 +201,6 @@ class EditProfileSuccessScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      // Quitamos el leading (botón atrás) para forzar el flujo limpio
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
@@ -194,11 +228,11 @@ class EditProfileSuccessScreen extends StatelessWidget {
                     width: 140,
                     height: 140,
                     decoration: BoxDecoration(
-                      color: colorScheme.primary.withValues(alpha: 0.05),
+                      color: colorScheme.primary.withOpacity(0.05),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: colorScheme.primary.withValues(alpha: 0.1),
+                          color: colorScheme.primary.withOpacity(0.1),
                           blurRadius: 40,
                           spreadRadius: 10,
                         ),
@@ -212,7 +246,7 @@ class EditProfileSuccessScreen extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
+                          color: Colors.black.withOpacity(0.05),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -251,8 +285,8 @@ class EditProfileSuccessScreen extends StatelessWidget {
                 text: "Volver a mi cuenta",
                 variant: ButtonVariant.neutral,
                 onPressed: () {
-                  context.pop(); // Saca el success
-                  context.pop(); // Saca el form
+                  context.pop();
+                  context.pop();
                 },
               ),
               const SizedBox(height: 20),

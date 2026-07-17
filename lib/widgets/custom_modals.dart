@@ -1,10 +1,9 @@
+import 'package:cuaji_report/core/models/mock_data.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'custom_button.dart';
-import '../core/models/report_mock.dart'; // Necesario para leer el ReportHistoryEvent
 
 class CustomModals {
-  // 1. MODAL GENÉRICO ACCIONES
   static void showActionModal(
     BuildContext context, {
     required bool isDanger,
@@ -16,6 +15,7 @@ class CustomModals {
     final colorScheme = Theme.of(context).colorScheme;
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       backgroundColor: colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
@@ -26,6 +26,13 @@ class CustomModals {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: const Icon(LucideIcons.x),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -66,15 +73,14 @@ class CustomModals {
     );
   }
 
-  // 2. MODAL AÑADIR EVIDENCIA
   static void showAddEvidenceModal(
     BuildContext context, {
     required VoidCallback onPhotoAdded,
   }) {
-    // ... (Se queda igual que la versión anterior)
     final colorScheme = Theme.of(context).colorScheme;
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       backgroundColor: colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
@@ -172,13 +178,12 @@ class CustomModals {
     );
   }
 
-  // 3. MODAL SALIR DEL REPORTE (Se queda igual)
   static void showExitReportModal(BuildContext context) {
-    // ... (Mismo código de antes)
     final colorScheme = Theme.of(context).colorScheme;
     showModalBottomSheet(
       context: context,
       isDismissible: false,
+      useRootNavigator: true,
       backgroundColor: colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
@@ -189,6 +194,13 @@ class CustomModals {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: const Icon(LucideIcons.x),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -256,15 +268,14 @@ class CustomModals {
     );
   }
 
-  // 4. TIP DE COMUNIDAD
   static void showCommunityTipModal(
     BuildContext context, {
     required bool isMine,
   }) {
-    // ... (Se queda igual)
     final colorScheme = Theme.of(context).colorScheme;
     showDialog(
       context: context,
+      useRootNavigator: true,
       builder: (context) {
         return Dialog(
           shape: RoundedRectangleBorder(
@@ -276,6 +287,13 @@ class CustomModals {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: const Icon(LucideIcons.x),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ),
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: const BoxDecoration(
@@ -332,7 +350,6 @@ class CustomModals {
     );
   }
 
-  // 5. GESTIONAR REPORTE (Dueño) -> Cambiado 'Compartir' por 'Escalar'
   static void showManageReportModal(
     BuildContext context, {
     required VoidCallback onResolve,
@@ -343,6 +360,7 @@ class CustomModals {
     final colorScheme = Theme.of(context).colorScheme;
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       backgroundColor: colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
@@ -354,15 +372,29 @@ class CustomModals {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(2),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: colorScheme.onSurfaceVariant.withValues(
+                          alpha: 0.2,
+                        ),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
                   ),
-                ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      icon: const Icon(LucideIcons.x),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
               Text(
@@ -434,7 +466,6 @@ class CustomModals {
     );
   }
 
-  // 6. PARTICIPAR (Vecino) -> Agregados los callbacks
   static void showParticipateModal(
     BuildContext context, {
     required VoidCallback onConfirm,
@@ -445,6 +476,7 @@ class CustomModals {
     final colorScheme = Theme.of(context).colorScheme;
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       backgroundColor: colorScheme.surface,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -457,15 +489,29 @@ class CustomModals {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(2),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: colorScheme.onSurfaceVariant.withValues(
+                          alpha: 0.2,
+                        ),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
                   ),
-                ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      icon: const Icon(LucideIcons.x),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
               Text(
@@ -537,12 +583,11 @@ class CustomModals {
     );
   }
 
-  // 7. ESCALAR (Reutilizable en ambos)
   static void showEscalateModal(BuildContext context) {
-    // ... (Se queda exactamente igual)
     final colorScheme = Theme.of(context).colorScheme;
     showDialog(
       context: context,
+      useRootNavigator: true,
       builder: (context) {
         return Dialog(
           shape: RoundedRectangleBorder(
@@ -633,7 +678,6 @@ class CustomModals {
     );
   }
 
-  // 8. MODAL DEL HISTORIAL (NUEVO - Trasladado de la pantalla)
   static void showHistoryModal(
     BuildContext context,
     List<ReportHistoryEvent> history,
@@ -641,6 +685,7 @@ class CustomModals {
     final colorScheme = Theme.of(context).colorScheme;
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true,
       backgroundColor: colorScheme.surface,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -685,7 +730,6 @@ class CustomModals {
     );
   }
 
-  // Helpers para pintar en los modales
   static Widget _buildModalTile(
     BuildContext context,
     String title,
@@ -766,7 +810,6 @@ class CustomModals {
     );
   }
 
-  // 9. MODAL DE CONFIRMACIÓN PREMIUM (Estilo Figma)
   static void showConfirmationDialog(
     BuildContext context, {
     required IconData mainIcon,
@@ -782,6 +825,7 @@ class CustomModals {
 
     showDialog(
       context: context,
+      useRootNavigator: true,
       builder: (context) {
         return Dialog(
           shape: RoundedRectangleBorder(
@@ -795,9 +839,15 @@ class CustomModals {
           child: Padding(
             padding: const EdgeInsets.all(28.0),
             child: Column(
-              mainAxisSize: MainAxisSize.min, // Se ajusta al contenido
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // ÍCONO CENTRAL CON EFECTO GLOW
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: const Icon(LucideIcons.x),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ),
                 Stack(
                   alignment: Alignment.center,
                   children: [
@@ -835,7 +885,6 @@ class CustomModals {
                 ),
                 const SizedBox(height: 24),
 
-                // TEXTOS
                 Text(
                   title,
                   textAlign: TextAlign.center,
@@ -857,20 +906,18 @@ class CustomModals {
                 ),
                 const SizedBox(height: 32),
 
-                // BOTONES
                 CustomButton(
                   text: primaryButtonText,
                   variant: primaryButtonVariant,
                   onPressed: () {
-                    Navigator.pop(context); // Cierra el modal
-                    onConfirm(); // Ejecuta la acción
+                    Navigator.pop(context);
+                    onConfirm();
                   },
                 ),
                 const SizedBox(height: 12),
                 CustomButton(
                   text: secondaryButtonText,
-                  variant: ButtonVariant
-                      .neutral, // Para que se vea como un texto o outline suave
+                  variant: ButtonVariant.neutral,
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -960,6 +1007,85 @@ class CustomModals {
           ),
         ),
       ],
+    );
+  }
+
+  static void showAlertDetailModal(
+    BuildContext context,
+    AlertModel alert, {
+    required VoidCallback onMarkRead,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    showModalBottomSheet(
+      context: context,
+      useRootNavigator: true,
+      backgroundColor: colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: const Icon(LucideIcons.x),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: alert.color.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(alert.icon, color: alert.color, size: 35),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                alert.title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                alert.description,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                alert.time,
+                style: TextStyle(fontSize: 12, color: colorScheme.primary),
+              ),
+              const SizedBox(height: 24),
+              CustomButton(
+                text: "Marcar como leída",
+                onPressed: () {
+                  onMarkRead();
+                  Navigator.pop(context);
+                },
+              ),
+              const SizedBox(height: 12),
+              CustomButton(
+                text: "Cerrar",
+                variant: ButtonVariant.outline,
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

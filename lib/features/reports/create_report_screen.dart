@@ -20,14 +20,11 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
   int _currentStep = 0;
   bool _isGridView = true;
 
-  // Estado del Wizard
   final List<String> _photos = [];
-  Map<String, dynamic>?
-  _selectedCategoryItem; // Almacena el mapa único para evitar bugs de selección
+  Map<String, dynamic>? _selectedCategoryItem;
   final TextEditingController _descriptionController = TextEditingController();
   final String _mockAddress = "Av. Juárez 151, Cuajimalpa de Morelos, CDMX";
 
-  // Lista de categorías
   final List<Map<String, dynamic>> _categoriesList = [
     {
       'type': ReportCategory.bache,
@@ -77,11 +74,10 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
     });
   }
 
-  // Lógica centralizada para validar si el paso actual permite continuar
   bool _isStepValid() {
     if (_currentStep == 0) return _photos.isNotEmpty;
     if (_currentStep == 1) return _selectedCategoryItem != null;
-    return true; // Los pasos de mapa y resumen siempre son válidos
+    return true;
   }
 
   void _onNextStep() {
@@ -128,7 +124,6 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          // Corrección estática: Uso de puramente Chevron puro sin línea horizontal extendida
           leading: IconButton(
             icon: Icon(
               LucideIcons.chevronLeft,
@@ -182,9 +177,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                     text: _currentStep == 3
                         ? "Confirmar y publicar"
                         : "Continuar",
-                    onPressed: _isStepValid()
-                        ? _onNextStep
-                        : () {}, // Mantenemos la función segura
+                    onPressed: _isStepValid() ? _onNextStep : () {},
                     isDisabled: !_isStepValid(),
                     icon: _currentStep == 3 ? LucideIcons.send : null,
                   ),
@@ -315,7 +308,6 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                       height: 95,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
-                        // Forzamos el Image.network interno para asegurar que el render del emulador no falle con el caché
                         image: DecorationImage(
                           image: NetworkImage(url),
                           fit: BoxFit.cover,
@@ -432,7 +424,6 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                   color: colorScheme.onSurface,
                 ),
               ),
-              // SWITCH DE VISTAS (Combo vs Slider Horizontal)
               Container(
                 decoration: BoxDecoration(
                   color: colorScheme.surface,
@@ -523,7 +514,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                   ),
                 )
               : SizedBox(
-                  height: 120, // Altura para las tarjetas horizontales
+                  height: 120,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: _categoriesList.length,

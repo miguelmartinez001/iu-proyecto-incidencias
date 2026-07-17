@@ -60,13 +60,13 @@ class HelpScreen extends StatelessWidget {
           const SizedBox(height: 16),
           _HelpAccordion(
             title: "¿Cómo confirmar una incidencia?",
-            subtitle: "¿Cómo confirmar una incidencia?", // Del Figma
+            subtitle: "¿Cómo confirmar una incidencia?",
             icon: LucideIcons.checkCircle2,
             color: Colors.blue.shade600,
             steps: const [
               "Abre cualquier reporte creado por otro vecino en tu zona.",
               "Desliza hacia abajo hasta la sección de 'Acciones'.",
-              "Abre cualquier reporte creado por otro vecino en tu zona.", // Repetido en el Figma
+              "Abre cualquier reporte creado por otro vecino en tu zona.",
               "Selecciona 'Confirmar incidencia' para aumentar la prioridad del caso.",
             ],
           ),

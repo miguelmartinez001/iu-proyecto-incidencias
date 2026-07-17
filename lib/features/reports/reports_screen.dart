@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
-import '../../widgets/custom_button.dart'; // Asegúrate de tener tu botón importado
+import '../../core/models/mock_data.dart';
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -10,12 +11,10 @@ class ReportsScreen extends StatefulWidget {
 }
 
 class _ReportsScreenState extends State<ReportsScreen> {
-  // 💡 CAMBIA ESTO A TRUE PARA VER LA PANTALLA VACÍA
   final bool _isEmpty = false;
-  final bool _hasDraft = true; // Para mostrar/ocultar el borrador
+  final bool _hasDraft = true;
 
   String _selectedFilter = "Todos";
-
   final List<String> _filters = [
     "Todos",
     "En Revisión",
@@ -23,23 +22,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
     "Recibido",
   ];
 
-  final List<Map<String, String>> _reports = [
-    {
-      "title": "Bache en Av. Cuajimalpa",
-      "status": "En Revisión",
-      "category": "bache",
-    },
-    {
-      "title": "Árbol caído en parque",
-      "status": "Recibido",
-      "category": "arbol",
-    },
-    {"title": "Sin Luz", "status": "Resuelto", "category": "luz"},
-  ];
+  List<ReportModel> get _myReports =>
+      mockReports.where((r) => r.isMine).toList();
 
-  List<Map<String, String>> get _filteredReports {
-    if (_selectedFilter == "Todos") return _reports;
-    return _reports.where((r) => r["status"] == _selectedFilter).toList();
+  List<ReportModel> get _filteredReports {
+    if (_selectedFilter == "Todos") return _myReports;
+    return _myReports.where((r) => r.status == _selectedFilter).toList();
   }
 
   Color _statusColor(String status) {
@@ -56,16 +44,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 
   IconData _categoryIcon(String category) {
-    switch (category) {
-      case "bache":
-        return LucideIcons.alertTriangle;
-      case "arbol":
-        return LucideIcons.treePine;
-      case "luz":
-        return LucideIcons.lightbulb;
-      default:
-        return LucideIcons.fileText;
-    }
+    if (category.toLowerCase().contains("bache"))
+      return LucideIcons.alertTriangle;
+    if (category.toLowerCase().contains("alumbrado"))
+      return LucideIcons.lightbulb;
+    return LucideIcons.fileText;
   }
 
   @override
@@ -87,71 +70,16 @@ class _ReportsScreenState extends State<ReportsScreen> {
         ),
         centerTitle: false,
       ),
-      body: _isEmpty
-          ? _buildEmptyState(colorScheme)
+      body: _isEmpty || _myReports.isEmpty
+          ? const Center(child: Text("Sin reportes"))
           : _buildReportsList(colorScheme),
     );
   }
 
-  // --- UI: ESTADO VACÍO ---
-  Widget _buildEmptyState(ColorScheme colorScheme) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(28),
-            decoration: BoxDecoration(
-              color: colorScheme.primary.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              LucideIcons.clipboardList,
-              size: 50,
-              color: colorScheme.primary,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            "Aún no tienes reportes",
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            "Ayuda a mejorar Cuajimalpa. Si ves un bache, luminaria fundida o árbol caído, ¡conviértete en el primero en reportarlo!",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: colorScheme.onSurfaceVariant,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 32),
-          CustomButton(
-            text: "+ Crear mi primer reporte",
-            // Variante neutral/café según tu Figma, ajusta si es necesario
-            variant: ButtonVariant.primary,
-            onPressed: () {
-              // Navegar al wizard de reportes
-            },
-          ),
-          const SizedBox(height: 40), // Espacio para el bottom nav bar
-        ],
-      ),
-    );
-  }
-
-  // --- UI: LISTADO CON DATOS ---
   Widget _buildReportsList(ColorScheme colorScheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Filtros (Pills)
         SizedBox(
           height: 40,
           child: ListView.builder(
@@ -203,7 +131,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             children: [
-              // SECCIÓN: PENDIENTE (Borrador)
               if (_hasDraft && _selectedFilter == "Todos") ...[
                 Text(
                   "PENDIENTE",
@@ -219,7 +146,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 const SizedBox(height: 25),
               ],
 
-              // SECCIÓN: HISTORIAL
               Text(
                 "HISTORIAL",
                 style: TextStyle(
@@ -230,10 +156,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 ),
               ),
               const SizedBox(height: 10),
+
               ..._filteredReports.map(
                 (report) => _buildReportCard(report, colorScheme),
               ),
-              const SizedBox(height: 80), // Margen inferior
+              const SizedBox(height: 80),
             ],
           ),
         ),
@@ -275,10 +202,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 const SizedBox(height: 2),
                 Text(
                   "Bache en Av. Reforma...",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.blue.withOpacity(0.7),
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.blue),
                 ),
               ],
             ),
@@ -289,75 +213,76 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 
-  Widget _buildReportCard(Map<String, String> report, ColorScheme colorScheme) {
-    final status = report["status"]!;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+  Widget _buildReportCard(ReportModel report, ColorScheme colorScheme) {
+    return InkWell(
+      onTap: () => context.pushNamed('report-detail', extra: report),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: colorScheme.onSurfaceVariant.withOpacity(0.1),
           ),
-        ],
-        border: Border.all(
-          color: colorScheme.onSurfaceVariant.withOpacity(0.1),
         ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: colorScheme.onSurfaceVariant.withOpacity(0.1),
-              shape: BoxShape.circle,
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: colorScheme.onSurfaceVariant.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                _categoryIcon(report.category),
+                color: colorScheme.onSurfaceVariant,
+                size: 22,
+              ),
             ),
-            child: Icon(
-              _categoryIcon(report["category"]!),
-              color: colorScheme.onSurfaceVariant,
-              size: 22,
-            ),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  report["title"]!,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _statusColor(status).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    status,
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    report.title,
                     style: TextStyle(
-                      color: _statusColor(status),
-                      fontSize: 10,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _statusColor(report.status).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      report.status,
+                      style: TextStyle(
+                        color: _statusColor(report.status),
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            Icon(
+              LucideIcons.chevronRight,
+              color: colorScheme.onSurfaceVariant,
+              size: 20,
+            ),
+          ],
+        ),
       ),
     );
   }

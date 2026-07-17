@@ -1,18 +1,7 @@
--- ============================================================
--- Urbana Report - MVP Database Schema
--- PostgreSQL + Supabase + PostGIS
--- ============================================================
-
--- ============================================================
--- EXTENSIONS
--- ============================================================
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE EXTENSION IF NOT EXISTS postgis;
 
--- ============================================================
--- ENUMS
--- ============================================================
 
 DO $$
 BEGIN
@@ -66,9 +55,6 @@ BEGIN
 END
 $$;
 
--- ============================================================
--- TABLE: profiles
--- ============================================================
 
 CREATE TABLE IF NOT EXISTS public.profiles (
     id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -81,9 +67,6 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 COMMENT ON TABLE public.profiles IS
 'Información pública del usuario.';
 
--- ============================================================
--- TABLE: user_preferences
--- ============================================================
 
 CREATE TABLE IF NOT EXISTS public.user_preferences (
     profile_id uuid PRIMARY KEY
@@ -105,9 +88,6 @@ CREATE TABLE IF NOT EXISTS public.user_preferences (
 COMMENT ON TABLE public.user_preferences IS
 'Preferencias del usuario.';
 
--- ============================================================
--- TABLE: categories
--- ============================================================
 
 CREATE TABLE IF NOT EXISTS public.categories (
 
@@ -136,9 +116,6 @@ CREATE TABLE IF NOT EXISTS public.categories (
 COMMENT ON TABLE public.categories IS
 'Catálogo de categorías.';
 
--- ============================================================
--- TABLE: reports
--- ============================================================
 
 CREATE TABLE IF NOT EXISTS public.reports (
 
@@ -185,9 +162,6 @@ CREATE TABLE IF NOT EXISTS public.reports (
 COMMENT ON TABLE public.reports IS
 'Reportes ciudadanos.';
 
--- ============================================================
--- TABLE: report_images
--- ============================================================
 
 CREATE TABLE IF NOT EXISTS public.report_images (
 
@@ -205,9 +179,6 @@ CREATE TABLE IF NOT EXISTS public.report_images (
 COMMENT ON TABLE public.report_images IS
 'Imágenes almacenadas en Supabase Storage.';
 
--- ============================================================
--- TABLE: report_actions
--- ============================================================
 
 CREATE TABLE IF NOT EXISTS public.report_actions (
 

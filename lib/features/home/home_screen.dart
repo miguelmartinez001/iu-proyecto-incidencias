@@ -1,12 +1,12 @@
 import 'dart:ui';
 
+import 'package:cuaji_report/core/models/mock_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 
-import '../../core/models/report_mock.dart';
 import '../../core/theme/category_colors.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -41,12 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // 1. TODO EL CONTENIDO ESCROLEABLE
           SingleChildScrollView(
             child: Column(
               children: [
-                // El mapa ahora tiene una altura fija y escrolea con la página
-                // 1. EL MAPA
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.45,
                   child: Stack(
@@ -54,11 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       FlutterMap(
                         options: const MapOptions(
                           initialCenter: LatLng(19.3562, -99.2995),
-                          initialZoom:
-                              14.5, // Un poco más cerca para que luzca mejor
+                          initialZoom: 14.5,
                           interactionOptions: InteractionOptions(
-                            flags: InteractiveFlag
-                                .all, // <-- ¡AHORA SÍ ES INTERACTIVO! (Zoom, arrastrar, etc.)
+                            flags: InteractiveFlag.all,
                           ),
                         ),
                         children: [
@@ -68,18 +63,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             userAgentPackageName: 'com.tuusuario.cuajireport',
                           ),
 
-                          // CAPA DE MARCADORES (Aquí dibujamos tu posición)
-                          // CAPA DE MARCADORES (Dinámica)
-                          // CAPA DE MARCADORES (Dinámica y protegida contra nulos)
                           MarkerLayer(
                             markers: [
-                              // 1. FILTRAMOS Y MAPEAMOS LOS REPORTES DEL MOCK
                               ..._filteredReports
-                                  .where(
-                                    (report) => report.location != null,
-                                  ) // <-- PROTECCIÓN ANTI-CRASH
+                                  .where((report) => report.location != null)
                                   .map((report) {
-                                    // Parseamos la categoría para los colores
                                     ReportCategory parsedCategory;
                                     final catStr = report.category
                                         .toLowerCase();
@@ -95,7 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       parsedCategory = ReportCategory.otro;
                                     }
 
-                                    // Seleccionamos el icono correcto según la categoría
                                     IconData markerIcon =
                                         LucideIcons.alertCircle;
                                     if (parsedCategory == ReportCategory.bache)
@@ -107,8 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       markerIcon = LucideIcons.droplet;
 
                                     return Marker(
-                                      point: report
-                                          .location, // Aquí ya es seguro que no es nulo
+                                      point: report.location,
                                       width: 36,
                                       height: 36,
                                       child: _buildMapMarker(
@@ -119,7 +105,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     );
                                   }),
 
-                              // 2. INDICADOR DEL USUARIO (El punto azul fijo al final)
                               Marker(
                                 point: const LatLng(19.3562, -99.2995),
                                 width: 40,
@@ -166,7 +151,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
 
-                      // Degradado para que el mapa se funda con el fondo
                       Positioned(
                         bottom: 0,
                         left: 0,
@@ -190,7 +174,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                // Buscador
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Container(
@@ -230,7 +213,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 15),
 
-                // Filtros
                 SizedBox(
                   height: 35,
                   child: ListView.builder(
@@ -280,7 +262,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 15),
 
-                // Lista de Tarjetas (shrinkWrap es vital aquí para que no marque error de layout)
                 _filteredReports.isEmpty
                     ? Padding(
                         padding: const EdgeInsets.all(40.0),
@@ -296,9 +277,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           top: 10,
                           bottom: 100,
                         ),
-                        physics:
-                            const NeverScrollableScrollPhysics(), // Desactiva scroll interno
-                        shrinkWrap: true, // Se adapta a la altura de sus hijos
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
                         itemCount: _filteredReports.length,
                         itemBuilder: (context, index) {
                           return _buildReportCard(
@@ -312,7 +292,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // 2. HEADER DE CRISTAL (Fijo arriba)
           Positioned(
             top: 0,
             left: 0,
@@ -422,7 +401,6 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Fila con el título y el Badge de "Tú"
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

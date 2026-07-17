@@ -207,7 +207,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // Acordeón personalizado para Ajustes
   Widget _buildDropdownRow(
     IconData icon,
     String title,
