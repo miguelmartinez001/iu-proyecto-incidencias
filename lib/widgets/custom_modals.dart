@@ -604,12 +604,7 @@ class CustomModals {
                       "WhatsApp",
                       Colors.green,
                     ),
-                    _buildShareIcon(
-                      context,
-                      LucideIcons.twitter,
-                      "X",
-                      Colors.black,
-                    ),
+                    _buildShareIcon(context, LucideIcons.x, "X", Colors.black),
                     _buildShareIcon(
                       context,
                       LucideIcons.link,
